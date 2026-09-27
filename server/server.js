@@ -3,6 +3,8 @@ import "dotenv/config";
 import cors from 'cors';
 import http from 'http';
 import { connectDB } from './lib/db.js';
+import userRouter from './routes/userRoutes.js';
+import messageRouter from './routes/messageRoutes.js';
 
 // create express app and HTTP server
 const app = express();
@@ -12,7 +14,10 @@ const server = http.createServer(app)
 app.use(cors());
 app.use(express.json({limit: '4mb'}));
 
-app.use("/api/status", (_req, res) => res.send("Server is live!"));
+// routes setup
+app.use("/api/status", (req, res) => res.send("Server is live!"));
+app.use("/api/auth", userRouter);
+app.use("/api/messages", messageRouter)
 
 // normalize env values so whitespace/newlines from .env files don't break MongoDB URLs
 if (process.env.MONGODB_URI) {
