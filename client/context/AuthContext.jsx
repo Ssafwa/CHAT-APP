@@ -67,12 +67,13 @@ export const AuthProvider = ({ children })=>{
         if(data.success){
             setAuthUser(data.user);
             toast.success("profile updated successfully")
+    } else {
+            toast.error(data.message)
         }
     } catch (error) {
         toast.error(error.message)
     }
-   }
-
+}
 
    // connect socket function to handle socket connecion and online users updates
    const connectSocket = (userData) => {
