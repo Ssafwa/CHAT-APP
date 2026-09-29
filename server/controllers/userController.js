@@ -2,6 +2,7 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js";
+import { io } from "../server.js";
 
 // Signup a new user
 export const signup = async (req, res) => {
@@ -91,6 +92,9 @@ export const updateProfile = async (req, res) => {
         { new: true }
       );
     }
+
+    // notify every connected client that this user's profile changed
+    io.emit("profileUpdated", updatedUser);
 
     res.json({ success: true, user: updatedUser });
   } catch (error) {

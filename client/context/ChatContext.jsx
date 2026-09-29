@@ -74,11 +74,24 @@ export const ChatProvider = ({ children })=>{
 
             }
         })
+
+    // listen for any user's profile changing, keep sidebar + open chat in sync
+    socket.on("profileUpdated", (updatedUser) => {
+        setUsers((prevUsers) =>
+            prevUsers.map((u) => (u._id === updatedUser._id ? updatedUser : u))
+        );
+        setSelectedUser((prevSelected) =>
+            prevSelected && prevSelected._id === updatedUser._id ? updatedUser : prevSelected
+        );
+    })
     }
    
     // funtion to unsubscrib from messages
     const unsubscribeFromMessages = ()=>{
-        if(socket) socket.off("newMessage")
+        if(socket) {
+            socket.off("newMessage")
+            socket.off("profileUpdated")
+        }
     }
 
     useEffect(()=>{
