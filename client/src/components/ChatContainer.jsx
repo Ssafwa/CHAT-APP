@@ -1,17 +1,57 @@
-import { useEffect, useRef } from 'react'
-import assets, { messagesDummyData } from '../assets/assets'
+import { useContext, useEffect, useRef, useState } from 'react'
+import assets from '../assets/assets'
 import { formatMessageTime } from '../lib/utils'
+import { chatContext } from '../../context/ChatContext'
+import { AuthContext } from '../../context/AuthContext'
+import toast from 'react-hot-toast'
 
 
-const ChatContainer = ({ selectedUser, setSelectedUser }) => {
+const ChatContainer = () => {
+
+  const { messages, selectedUser, setSelectedUser, sendMessage, 
+    getMessages} = useContext(chatContext)
+
+  const { authUser, onlineUser } = useContext(AuthContext)
+
 
   const scrollEnd = useRef()
 
+  const [input, setInput] = useState('');
+
+  // handle sending a message
+  const handleSendMessage = async (e) => {
+    if(input.trim() === "") return null;
+    await sendMessage({text: input.trim()});
+    setInput("")
+  }
+
+  // handle sending an image
+  const handleSendImage = async (e) =>{
+    const file = e.target.files[0];
+    if(!file || !file.type.startsWith("image/")){
+      toast.error("selecte an image file")
+      return;
+    }
+    const reader = new FileReader();
+
+    reader.onloadend = async ()=>{
+      await sendMessage({image: reader.result})
+      e.target.value = ""
+    }
+    reader.readAsDataURL(file)
+  }
+
+  useEffect(()=>{
+    if(selectedUser){
+      getMessages(selectedUser._id)
+    }
+  },[selectedUser])
+
   useEffect(() => {
-    if (scrollEnd.current) {
+    if (scrollEnd.current && messages) {
       scrollEnd.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [selectedUser])
+  }, [messages])
 
   return selectedUser ? (
     <div className='h-full flex flex-col backdrop-blur-lg relative overflow-hidden'>
@@ -19,10 +59,13 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
       {/* ----------- Chat Header ----------- */}
 
       <div className='flex items-center gap-3 py-3 mx-4 border-b border-stone-500'>
-        <img src={assets.profile_martin} alt='' className='w-8 rounded-full' />
+        <img src={selectedUser.profilePic || assets.avatar_icon} alt='' className='w-8 rounded-full' />
         <p className='flex-1 text-1 text-white flex item-center gap-2'>
-          Martin Johnson
-          <span className='w-2 h-2 rounded-full bg-green-500'></span>
+          {selectedUser.fullName}
+         
+         {onlineUser.includes(selectedUser._id) && (
+  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+)}
         </p>
         <img onClick={() => setSelectedUser(null)} src={assets.arrow_icon} alt='' className='md:hidden max-w-7' />
         <img src={assets.help_icon} alt='' className='max-md:hidden max-w-5' />
@@ -31,8 +74,8 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
       {/* ----------- Chat Area ----------- */}
 
       <div className='flex-1 flex flex-col gap-4 p-4 bg-white/10 overflow-y-auto'>
-        {messagesDummyData.map((msg, index) => {
-          const isOwnMessage = msg.senderId === '680f50e4f10f3cd28382ecf9'
+        {messages.map((msg, index) => {
+          const isOwnMessage = msg.senderId === authUser?._id
 
           return (
             <div
@@ -41,7 +84,11 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
             >
               {!isOwnMessage && (
                 <div className='flex flex-col items-center text-[10px] text-gray-400 gap-1 shrink-0'>
-                  <img src={assets.avatar_icon} alt='' className='w-7 rounded-full' />
+                  <img
+                    src={selectedUser.profilePic || assets.avatar_icon}
+                    alt={selectedUser.fullName}
+                    className='w-7 rounded-full'
+                  />
                 </div>
               )}
 
@@ -63,14 +110,17 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
                 )}
 
                 <span className='mt-1 text-[10px] text-gray-400'>
-                  {msg.createdAt}
+                  {formatMessageTime(msg.createdAt)}
                 </span>
               </div>
 
               {isOwnMessage && (
                 <div className='flex flex-col items-center text-[10px] text-gray-400 gap-1 shrink-0'>
-                  <img src={assets.profile_martin} alt='' className='w-7 rounded-full' />
-                  <p className='text-gray-500'>{formatMessageTime(msg.createdAt)}</p>
+                  <img
+                    src={authUser?.profilePic || assets.avatar_icon}
+                    alt={authUser?.fullName || 'You'}
+                    className='w-7 rounded-full'
+                  />
                 </div>
               )}
             </div>
@@ -82,17 +132,23 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
       {/* -------- bottom area --------- */}
       <div className='flex items-center gap-3 p-3 border-t border-white/10 bg-transparent backdrop-blur-sm'>
         <div className='flex items-center flex-1 bg-transparent rounded-full border border-white/10 backdrop-blur-sm'>
-          <input
+          <input onChange={(e)=> setInput(e.target.value)} value={input}
+          onKeyDown={(e)=> e.key === "Enter" ? handleSendMessage(e) :  null}
             type='text'
             placeholder='Send a message'
             className='flex-1 text-sm p-3 bg-transparent border-none rounded-full outline-none text-white placeholder:text-gray-400'
           />
-          <input type='file' id='image' accept='image/png, image/jpeg' hidden />
+          <input onChange={handleSendImage} type='file' id='image' accept='image/png, image/jpeg' hidden />
           <label htmlFor='image'>
             <img src={assets.gallery_icon} alt='' className='w-5 mr-2 cursor-pointer opacity-80' />
           </label>
         </div>
-        <img src={assets.send_button} alt='' className='w-7 cursor-pointer' />
+        <img
+          src={assets.send_button}
+          alt='Send message'
+          onClick={handleSendMessage}
+          className='w-7 cursor-pointer'
+        />
       </div>
     </div>
   ) : (
