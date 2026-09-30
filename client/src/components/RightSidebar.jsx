@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import assets, { imagesDummyData } from '../assets/assets'
+import assets from '../assets/assets'
 import { chatContext } from '../../context/ChatContext'
 import { AuthContext } from '../../context/AuthContext'
 
@@ -7,7 +7,7 @@ import { AuthContext } from '../../context/AuthContext'
 const RightSidebar = () => {
 
   const {selectedUser, messages} = useContext(chatContext)
-  const {logout, onlineUsers} = useContext(AuthContext)
+  const {logout, onlineUser} = useContext(AuthContext)
   const [msgImages, setMsgImages] = useState([])
 
    // get all the image from the messages and set them to state
@@ -17,8 +17,7 @@ const RightSidebar = () => {
       )
    },[messages])
   return selectedUser && (
-    <div className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll
-    ${selectedUser ? "mx-md:hidden" : ""}`}>
+    <div className='bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll'>
 
        <div className='pt-16 flex flex-col items-center gap-2 text-xs font-ligt
        mx-auto'>
@@ -26,14 +25,14 @@ const RightSidebar = () => {
            className='w-20 aspect-[1/1] rounded-full'/>
            <h1 className='px-10 text-xl font-medium mx-auto flex item-center
            gap-2'> 
-              {onlineUsers.includes(selectedUser._id) && <p className='w-2 h-2 rounded-full bg-green-500'></p>}
+              {onlineUser.includes(selectedUser._id) && <p className='w-2 h-2 rounded-full bg-green-500'></p>}
            {selectedUser.fullName} 
            </h1>
            <p className='px-10 mx-auto'>{selectedUser.bio}</p>
        </div>
        <hr className='border-[#ffffff50] my-4'/>
 
-       <div className='px-5ntext-xs'>
+       <div className='px-5 text-xs'>
         <p>Media</p>
         <div className='mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2
         gap-4 opacity-80'>
