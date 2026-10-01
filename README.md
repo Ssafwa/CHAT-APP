@@ -24,9 +24,9 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
 
 ---
 
-AUTHENTICATION ---
-~Email and password signup/login
-~passord protected 
-~jwt-based authentication
+AUTHENTICATION
 
+- Email and password signup/login
+- Password protected
+- JWT-based authentication
 
