@@ -47,9 +47,12 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
 
   # TECH STACK I USED ACROSS THIS WEBSITE
   ---------------------------------------
-  Frontend: React, React Router, Tailwind CSS, Socket.IO Client,
-  Axios Backend: Node.js, Express, Socket.IO
-  Database: MongoDB (Mongoose)
-  Auth: JSON Web Tokens (JWT),
-  bcrypt Media storage: Cloudinary
-  Deployment: Vercel
+ - Frontend: React, React Router, Tailwind CSS, Socket.IO Client,
+ - Axios Backend: Node.js, Express, Socket.IO
+ - Database: MongoDB (Mongoose)
+ - Auth: JSON Web Tokens (JWT),
+ - bcrypt Media storage: Cloudinary
+ - Deployment: Vercel
+
+   `note for hackclub shipwrights``
+   this ![Alt text](https://img.shields.io/badge/LABEL-COLOR?style=STYLE&logo=LOGO&logoColor=LOGOCOLOR)
