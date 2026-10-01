@@ -24,9 +24,27 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
 
 ---
 
-AUTHENTICATION
+1-AUTHENTICATION
 
 - Email and password signup/login
 - Password protected
 - JWT-based authentication
 
+2-REAL-TIME MESSAGING 
+- it uses socket.io so instend message. no refresh needed
+- live online/offline status for users
+- unseen messages number showse in sidebar
+- message will automaticaly marked as senn when conversation opened
+
+3-MEDIA SHARING
+- send images directly in a conversation
+- profile pictures uploaded and hosted via cloudinary
+
+4-USER EXPERIENCE
+- search the user by name
+- reasponsible layout
+- dark,glassmorphic and elegent UI with constent desing across the entire web
+
+  #TECH STACK
+  -----------
+  
