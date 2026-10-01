@@ -55,7 +55,12 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
  - Deployment: Vercel
 
 > [!NOTE]
-> HHHHHHHHH
+> A NOTE FOR HACKCLUB SHIPWRIGHTS
+> -this readme is fully writen by me 
+> <img width="1829" height="799" alt="image" src="https://github.com/user-attachments/assets/ea564617-9f5e-4677-863d-ace754c68b16" />
+
+> and this website took me above 22 houres so i dont use any ai for any ui or logics fully done by me 
+
          
    
    
