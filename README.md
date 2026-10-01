@@ -55,5 +55,14 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
  - Deployment: Vercel
 
    `note for hackclub shipwrights`
+   - [ ] Write your text here
+
+| |
+|---|
+| Write your text here |
+
+> [!NOTE]
+> Write your text here
+         
    
    
