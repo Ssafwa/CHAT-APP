@@ -45,6 +45,11 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
 - reasponsible layout
 - dark,glassmorphic and elegent UI with constent desing across the entire web
 
-  #TECH STACK
-  -----------
-  
+  # TECH STACK I USED ACROSS THIS WEBSITE
+  ---------------------------------------
+  Frontend: React, React Router, Tailwind CSS, Socket.IO Client,
+  Axios Backend: Node.js, Express, Socket.IO
+  Database: MongoDB (Mongoose)
+  Auth: JSON Web Tokens (JWT),
+  bcrypt Media storage: Cloudinary
+  Deployment: Vercel
