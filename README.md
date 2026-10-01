@@ -10,7 +10,7 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
 
 ---
 
-1 - Demo: 1 - [![Open CHAT-APP](https://img.shields.io/badge/OPEN%20CHAT--APP-Click%20Here-blue?style=for-the-badge)](https://chat-app-landing-nine.vercel.app/)
+1 - Demo: 1 - [![Open CHAT-APP](https://chat-app-landing-nine.vercel.app/)
 
 2 - Log in with an account.
 
