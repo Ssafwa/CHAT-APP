@@ -54,8 +54,8 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
  - bcrypt Media storage: Cloudinary
  - Deployment: Vercel
 
-> [!NOTE FOR HACKCLUB SHIPWRIGHTS]
-> 
+> [!NOTE]
+> HHHHHHHHH
          
    
    
