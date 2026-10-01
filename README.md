@@ -18,8 +18,10 @@ CHAT-APP is a basic and efficient chatting application with simple and useful fe
 
 4 - If you need to chat on the same device for testing the CHAT-APP, open the CHAT-APP in a private or incognito tab, then log in with a different account and start chatting.
 
-eg:- <img width="1918" height="975" alt="image" src="https://github.com/user-attachments/assets/0dbe6f06-2c3b-4951-ae2e-af077b4ee9ff" />
+ <img width="1918" height="975" alt="image" src="https://github.com/user-attachments/assets/0dbe6f06-2c3b-4951-ae2e-af077b4ee9ff" />
 
 # FEATURES
 
 ---
+
+
