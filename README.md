@@ -1,0 +1,66 @@
+# CHAT-APP
+
+---
+
+CHAT-APP is a basic and efficient chatting application with simple and useful features, designed to provide a smooth and easy chatting experience.
+
+<img width="1379" height="806" alt="image" src="https://github.com/user-attachments/assets/a8f9ab28-387c-47a1-8239-1acd1e02cc9a" />
+
+# HOW TO USE THE WEBSITE
+
+---
+
+1 - Demo: 1 - [Open CHAT-APP](https://chat-app-landing-nine.vercel.app/)
+
+2 - Log in with an account.
+
+3 - Open the CHAT-APP on another device that you want to chat with and log in with a different account. Then, select the account name and start chatting.
+
+4 - If you need to chat on the same device for testing the CHAT-APP, open the CHAT-APP in a private or incognito tab, then log in with a different account and start chatting.
+
+ <img width="1918" height="975" alt="image" src="https://github.com/user-attachments/assets/0dbe6f06-2c3b-4951-ae2e-af077b4ee9ff" />
+
+# FEATURES
+
+---
+
+1-AUTHENTICATION
+
+- Email and password signup/login
+- Password protected
+- JWT-based authentication
+
+2-REAL-TIME MESSAGING 
+- it uses socket.io so instend message. no refresh needed
+- live online/offline status for users
+- unseen messages number showse in sidebar
+- message will automaticaly marked as senn when conversation opened
+
+3-MEDIA SHARING
+- send images directly in a conversation
+- profile pictures uploaded and hosted via cloudinary
+
+4-USER EXPERIENCE
+- search the user by name
+- reasponsible layout
+- dark,glassmorphic and elegent UI with constent desing across the entire web
+
+  # TECH STACK I USED ACROSS THIS WEBSITE
+  ---------------------------------------
+ - Frontend: React, React Router, Tailwind CSS, Socket.IO Client,
+ - Axios Backend: Node.js, Express, Socket.IO
+ - Database: MongoDB (Mongoose)
+ - Auth: JSON Web Tokens (JWT),
+ - bcrypt Media storage: Cloudinary
+ - Deployment: Vercel
+
+> [!NOTE]
+> A NOTE FOR HACKCLUB SHIPWRIGHTS
+> -this readme is fully writen by me 
+> <img width="1829" height="799" alt="image" src="https://github.com/user-attachments/assets/ea564617-9f5e-4677-863d-ace754c68b16" />
+
+> and this website took me above 22 houres so i dont use any ai for any ui or logics fully done by me 
+
+         
+   
+   
