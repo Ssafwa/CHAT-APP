@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import Sidebar from '../components/Sidebar'
 import ChatContainer from '../components/ChatContainer'
 import RightSidebar from '../components/RightSidebar'
 import { chatContext } from '../../context/ChatContext'
 
-function homepage() {
+function HomePage() {
 
    const {selectedUser} = useContext(chatContext)
 
@@ -23,4 +23,4 @@ overflow-hidden h-[100%] grid grid-cols-1 relative ${selectedUser ?
   )
 }
 
-export default homepage
+export default HomePage

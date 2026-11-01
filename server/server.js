@@ -6,6 +6,9 @@ import { connectDB } from './lib/db.js';
 import userRouter from './routes/userRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
 import { Server } from 'socket.io';
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
+import User from './models/User.js';
 
 // create express app and HTTP server
 const app = express();
@@ -17,22 +20,59 @@ export const io = new Server (server, {
 })
 
 // store online users
-export const userSocketMap = {}; // {userId: socketId}
+export const userSocketMap = new Map(); // userId -> connected socket IDs
 
-// socket.io connection header
+io.use((socket, next) => {
+  try {
+    const token = socket.handshake.auth?.token;
+    if (!token) return next(new Error("Authentication required"));
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (typeof decoded.userId !== "string" || !mongoose.isObjectIdOrHexString(decoded.userId)) {
+      return next(new Error("Invalid authentication token"));
+    }
+    socket.data.userId = decoded.userId;
+    next();
+  } catch {
+    next(new Error("Invalid or expired authentication token"));
+  }
+});
+
+// authenticated socket events
 io.on("connection", (socket) => {
-  const userId = socket.handshake.query.userId;
-  console.log("User Connected", userId);
-
-  if(userId) userSocketMap[userId] = socket.id;
+  const userId = socket.data.userId;
+  const userSockets = userSocketMap.get(userId) || new Set();
+  userSockets.add(socket.id);
+  userSocketMap.set(userId, userSockets);
+  socket.join(userId);
 
   // emit online users to ll connected client
-  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  io.emit("getOnlineUsers", [...userSocketMap.keys()]);
+
+  socket.on("typing", (payload = {}) => {
+    const { receiverId, isTyping } = payload ?? {};
+    if (typeof receiverId !== "string" || !mongoose.isObjectIdOrHexString(receiverId) ||
+        typeof isTyping !== "boolean" || receiverId === userId) return;
+    socket.to(receiverId).emit("typing", { senderId: userId, isTyping });
+  });
 
   socket.on("disconnect", () => {
-    console.log("User Disconnected", userId);
-    delete userSocketMap[userId];
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    const connectedSockets = userSocketMap.get(userId);
+    connectedSockets?.delete(socket.id);
+    if (connectedSockets?.size === 0) {
+      userSocketMap.delete(userId);
+      User.findByIdAndUpdate(userId, { lastSeenAt: new Date() }, { new: true })
+        .select("lastSeenAt showLastSeen")
+        .then((user) => {
+          if (user) {
+            io.emit("lastSeenUpdated", {
+              userId,
+              lastSeenAt: user.showLastSeen ? user.lastSeenAt : null,
+            });
+          }
+        })
+        .catch((error) => console.error("Unable to update last seen:", error.message));
+    }
+    io.emit("getOnlineUsers", [...userSocketMap.keys()]);
   })
 })
 

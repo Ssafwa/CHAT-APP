@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from "react";
 import axios from 'axios'
 import toast from "react-hot-toast";
 import {io} from "socket.io-client"
+import { enableNotificationSound } from "../src/lib/notificationSound";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.baseURL = backendUrl
@@ -22,10 +23,10 @@ export const AuthProvider = ({ children })=>{
         const { data } = await axios.get("/api/auth/check")
         if (data.success){
             setAuthUser(data.user)
-            connectSocket(data.user)
+            connectSocket(data.user, token)
         }
     } catch (error) {
-        toast.error(error.message)
+        toast.error(error.response?.data?.message || error.message)
         
     }
    }
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children })=>{
         const { data } = await axios.post(`/api/auth/${state}`, credentials);
         if (data.success) {
             setAuthUser(data.userData);
-            connectSocket(data.userData);
+            connectSocket(data.userData, data.token);
             axios.defaults.headers.common["token"] = data.token;
             setToken(data.token);
             localStorage.setItem("token", data.token)
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children })=>{
             toast.error(data.message)     // fixed: use "data" from the response
         }
     } catch (error) {
-        toast.error(error.message)        // fixed: use "error" from the catch
+        toast.error(error.response?.data?.message || error.message)
     }
 }
 
@@ -58,7 +59,8 @@ export const AuthProvider = ({ children })=>{
     setonlineUser([]);
     axios.defaults.headers.common["token"] = null;
     toast.success("Logged out successfully")
-    if (socket)  socket.disconnect();
+    if (socket) socket.disconnect();
+    setsocket(null);
  }
    /// uppdtae profile function to handle user profile update
    const updateProfile = async (body)=>{
@@ -71,16 +73,30 @@ export const AuthProvider = ({ children })=>{
             toast.error(data.message)
         }
     } catch (error) {
-        toast.error(error.message)
+        toast.error(error.response?.data?.message || error.message)
     }
 }
 
+   const updateLastSeenVisibility = async (showLastSeen)=>{
+    try {
+        const { data } = await axios.put("/api/auth/last-seen-visibility", { showLastSeen });
+        if(data.success){
+            setAuthUser(data.user);
+            return true;
+        }
+        toast.error(data.message);
+    } catch (error) {
+        toast.error(error.response?.data?.message || error.message);
+    }
+    return false;
+}
+
    // connect socket function to handle socket connecion and online users updates
-   const connectSocket = (userData) => {
-      if(!userData || socket?.connected) return;
+   const connectSocket = (userData, accessToken = token) => {
+      if(!userData || !accessToken || socket?.connected) return;
       const newSocket = io(backendUrl, {
-        query: {
-            userId: userData._id,
+        auth: {
+            token: accessToken,
         }
       });
       newSocket.connect();
@@ -92,10 +108,21 @@ export const AuthProvider = ({ children })=>{
    }
 
    useEffect(() =>{
+    const enableSound = () => {
+        enableNotificationSound();
+    };
+    document.addEventListener("pointerdown", enableSound);
+    document.addEventListener("keydown", enableSound);
+
     if(token){
         axios.defaults.headers.common['token'] = token;
+        checkAuth();
     }
-    checkAuth();
+
+    return () => {
+        document.removeEventListener("pointerdown", enableSound);
+        document.removeEventListener("keydown", enableSound);
+    };
    },[]);
 
    const value = {
@@ -105,7 +132,8 @@ export const AuthProvider = ({ children })=>{
        socket,
        login,
        logout,
-       updateProfile
+       updateProfile,
+       updateLastSeenVisibility,
 
    }
 

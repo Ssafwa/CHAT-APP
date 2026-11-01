@@ -6,3 +6,9 @@ export const generateToken = (userId) => {
     return token; 
     
 }
+
+export const serializeUser = (user) => {
+    const userData = user.toObject ? user.toObject() : { ...user };
+    delete userData.password;
+    return userData;
+}

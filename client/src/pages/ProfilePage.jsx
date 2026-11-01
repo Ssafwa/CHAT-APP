@@ -5,12 +5,13 @@ import { AuthContext } from '../../context/AuthContext'
 
 const ProfilePage = () => {
 
-  const {authUser, updateProfile} = useContext(AuthContext)
+  const {authUser, updateProfile, updateLastSeenVisibility} = useContext(AuthContext)
 
   const [selectedImg, setSelectedImg] = useState(null)
   const navigate = useNavigate()
   const [name, setName] = useState(authUser.fullName)
   const [bio, setBio] = useState(authUser.bio )
+  const [showLastSeen, setShowLastSeen] = useState(authUser.showLastSeen !== false)
 
   const handleSubmit = async (e)=>{
       e.preventDefault();
@@ -47,6 +48,22 @@ const ProfilePage = () => {
            placeholder="Write Profile bio" required className='p-2 border
           border-gray-500 rounded-md focus:outline-none focus:ring-2
           focus:ring-violet-500' rows={4}></textarea>
+
+          <label className="flex items-center gap-3 text-sm">
+            <input
+              type="checkbox"
+              checked={showLastSeen}
+              onChange={async (event) => {
+                const nextValue = event.target.checked
+                setShowLastSeen(nextValue)
+                if (!await updateLastSeenVisibility(nextValue)) {
+                  setShowLastSeen(!nextValue)
+                }
+              }}
+              className="h-4 w-4 accent-violet-500"
+            />
+            Show my last seen to other users
+          </label>
 
           <button type="submit" className='bg-gradient-to-r from-purple-400
           to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer

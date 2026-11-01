@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import assets from '../assets/assets'
 import { chatContext } from '../../context/ChatContext'
 import { AuthContext } from '../../context/AuthContext'
@@ -8,14 +8,7 @@ const RightSidebar = () => {
 
   const {selectedUser, messages} = useContext(chatContext)
   const {logout, onlineUser} = useContext(AuthContext)
-  const [msgImages, setMsgImages] = useState([])
-
-   // get all the image from the messages and set them to state
-   useEffect(()=>{
-      setMsgImages(
-        messages.filter(msg => msg.image).map(msg=>msg.image)
-      )
-   },[messages])
+  const msgImages = messages.filter((message) => message.image).map((message) => message.image)
   return selectedUser && (
     <div className='bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll'>
 
@@ -37,11 +30,10 @@ const RightSidebar = () => {
         <div className='mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2
         gap-4 opacity-80'>
           {msgImages.map((url, index)=>(
-            <div key={index} onClick={()=> window.open(url)} className='
-            cursor-pointer rounded'>
-              <img src={url} alt="" className='h-full rounded-md'/>
-               
-            </div>
+            <a key={`${url}-${index}`} href={url} target="_blank" rel="noopener noreferrer"
+              aria-label={`Open shared image ${index + 1}`} className='cursor-pointer rounded'>
+              <img src={url} alt="" loading="lazy" className='h-full rounded-md'/>
+            </a>
           ))}
 
         </div>
