@@ -59,7 +59,7 @@ export const getUsersForSidebar = async (req, res) => {
         const sortedUsers = users
             .map((user) => ({
                 ...user,
-                lastSeenAt: user.showLastSeen ? user.lastSeenAt : null,
+                lastSeenAt: user.showLastSeen !== false ? user.lastSeenAt : null,
                 lastMessage: latestByUser.get(user._id.toString()) || null,
             }))
             .sort((a, b) => {
