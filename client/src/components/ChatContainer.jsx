@@ -41,6 +41,7 @@ const ChatContainer = () => {
   const [editingMessageId, setEditingMessageId] = useState(null)
   const [editText, setEditText] = useState('')
   const [deleteOptionsId, setDeleteOptionsId] = useState(null)
+  const [activeMessageActionsId, setActiveMessageActionsId] = useState(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -224,7 +225,21 @@ const ChatContainer = () => {
   }
 
   const handleDelete = async (messageId, mode) => {
-    if (await deleteMessage(messageId, mode)) setDeleteOptionsId(null)
+    if (await deleteMessage(messageId, mode)) {
+      setDeleteOptionsId(null)
+      setActiveMessageActionsId(null)
+    }
+  }
+
+  const toggleMessageActions = (messageId) => {
+    setActiveMessageActionsId((current) => current === messageId ? null : messageId)
+  }
+
+  const handleMessageKeyDown = (event, messageId) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      toggleMessageActions(messageId)
+    }
   }
 
   const handleSearchResult = (message) => {
@@ -350,7 +365,7 @@ const ChatContainer = () => {
             <div
               key={msg._id}
               id={`message-${msg._id}`}
-              className={`flex items-end gap-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+              className={`group flex items-end gap-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
             >
               {!isOwnMessage && (
                 <div className='flex flex-col items-center text-[10px] text-gray-400 gap-1 shrink-0'>
@@ -389,13 +404,25 @@ const ChatContainer = () => {
                     src={msg.image}
                     alt='Shared image'
                     loading='lazy'
-                    className='max-w-[230px] max-h-[320px] object-contain border border-stone-700 rounded-2xl overflow-hidden shadow-md'
+                    role='button'
+                    tabIndex={0}
+                    aria-label='Show image message actions'
+                    aria-expanded={activeMessageActionsId === msg._id}
+                    onClick={() => toggleMessageActions(msg._id)}
+                    onKeyDown={(event) => handleMessageKeyDown(event, msg._id)}
+                    className='max-w-[230px] max-h-[320px] object-contain border border-stone-700 rounded-2xl overflow-hidden shadow-md cursor-pointer'
                   />
                 ) : (
                   <p
+                    role='button'
+                    tabIndex={0}
+                    aria-label='Show message actions'
+                    aria-expanded={activeMessageActionsId === msg._id}
+                    onClick={() => toggleMessageActions(msg._id)}
+                    onKeyDown={(event) => handleMessageKeyDown(event, msg._id)}
                     className={`max-w-[75%] p-2.5 md:text-sm font-light break-words rounded-2xl shadow-sm ${isOwnMessage
-                      ? 'bg-violet-500/30 text-white rounded-br-none ml-auto'
-                      : 'bg-stone-800 text-white rounded-bl-none mr-auto'}`}
+                      ? 'bg-violet-500/30 text-white rounded-br-none ml-auto cursor-pointer'
+                      : 'bg-stone-800 text-white rounded-bl-none mr-auto cursor-pointer'}`}
                   >
                     {msg.text}
                   </p>
@@ -410,8 +437,31 @@ const ChatContainer = () => {
                     </span>
                   )}
                 </span>
+                {Object.entries(reactions).length > 0 && (
+                  <div className='mt-1 flex flex-wrap gap-1' aria-label='Message reactions'>
+                    {Object.entries(reactions).map(([emoji, count]) => (
+                      <span
+                        key={emoji}
+                        className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${
+                          myReaction === emoji
+                            ? 'border-violet-300/60 bg-violet-500/30 text-white'
+                            : 'border-white/10 bg-black/25 text-gray-200'
+                        }`}
+                      >
+                        <span>{emoji}</span>
+                        {count > 1 && <span>{count}</span>}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {!msg.deletedForEveryone && (
-                  <div className='mt-1 flex flex-wrap items-center gap-2 text-[10px] text-gray-300'>
+                  <div
+                    role='group'
+                    aria-label='Message actions'
+                    className={`flex flex-wrap items-center gap-2 text-[10px] text-gray-300 overflow-hidden transition-[max-height,opacity] duration-150 ease-out max-h-0 opacity-0 pointer-events-none group-hover:max-h-24 group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:max-h-24 group-focus-within:opacity-100 group-focus-within:pointer-events-auto ${
+                      activeMessageActionsId === msg._id ? 'max-h-24 opacity-100 pointer-events-auto' : ''
+                    }`}
+                  >
                     <button type='button' onClick={() => setReplyingTo(msg)} className='hover:text-white'>Reply</button>
                     {isOwnMessage && msg.text && (
                       <button
@@ -453,7 +503,7 @@ const ChatContainer = () => {
                         aria-pressed={myReaction === emoji}
                         className={myReaction === emoji ? 'text-violet-300' : 'hover:text-white'}
                       >
-                        {emoji}{reactions[emoji] ? ` ${reactions[emoji]}` : ''}
+                        {emoji}
                       </button>
                     ))}
                   </div>
